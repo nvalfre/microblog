@@ -15,8 +15,8 @@ type UserServiceImpl struct {
 }
 
 // AddFollower adds a follower to a user.
-func (s *UserServiceImpl) AddFollower(followerID, userID string) error {
-	return s.UserRepo.AddFollower(followerID, userID)
+func (s *UserServiceImpl) AddFollower(userID, followerID string) error {
+	return s.UserRepo.AddFollower(userID, followerID)
 }
 
 // GetFollowers retrieves all followers of a user.
