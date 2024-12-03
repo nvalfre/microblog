@@ -5,7 +5,7 @@ import (
 )
 
 type UserService interface {
-	AddFollower(followerID, userID string) error
+	AddFollower(userID, followerID string) error
 	GetFollowers(userID string) ([]string, error)
 }
 
