@@ -1,0 +1,55 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go specific
+*.test
+*.out
+*.mod
+*.sum
+
+# Go workspace
+*.workspace
+
+# Output of the build process
+bin/
+dist/
+out/
+
+# Test binary
+*.test
+
+# Logs
+*.log
+*.trace
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.iml
+
+# Dependency directories
+vendor/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# Debugging-related
+*.prof
+*.trace
+
+# Docker
+docker-compose.override.yml
+
+# Kubernetes config
+*.yaml
+
+# OS-generated files
+.DS_Store
+Thumbs.db
