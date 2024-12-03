@@ -1,25 +1,20 @@
 package main
 
 import (
-  "fmt"
+	"microblog/infrastructure/adapters/cache"
+	"microblog/infrastructure/database"
+	"microblog/infrastructure/logger"
+	"microblog/infrastructure/server"
 )
 
-//TIP To run your code, right-click the code and select <b>Run</b>. Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.
-
 func main() {
-  //TIP Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined or highlighted text
-  // to see how GoLand suggests fixing it.
-  s := "gopher"
-  fmt.Println("Hello and welcome, %s!", s)
+	logger.InitializeLogger()
+	mongoClient := database.NewMongoClient("mongodb://localhost:27017")
+	redisClient := database.NewRedisClient("localhost:6379")
+	redisCache := cache.NewRedisCache(redisClient)
 
-  for i := 1; i <= 5; i++ {
-	//TIP You can try debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-	// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>. To start your debugging session, 
-	// right-click your code in the editor and select the <b>Debug</b> option. 
-	fmt.Println("i =", 100/i)
-  }
+	srv := server.NewHTTPServer(mongoClient, redisCache)
+	if err := srv.Run(":8080"); err != nil {
+		logger.Fatal("Failed to start server", err)
+	}
 }
-
-//TIP See GoLand help at <a href="https://www.jetbrains.com/help/go/">jetbrains.com/help/go/</a>.
-// Also, you can try interactive lessons for GoLand by selecting 'Help | Learn IDE Features' from the main menu.
