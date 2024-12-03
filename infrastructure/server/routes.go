@@ -9,6 +9,7 @@ import (
 	"microblog/infrastructure/adapters/persistence"
 	"microblog/interface/controllers"
 	"microblog/security/auth"
+	"microblog/services"
 )
 
 // RegisterRoutes sets up the routes for the HTTP server.
@@ -17,10 +18,14 @@ func RegisterRoutes(router *gin.Engine, mongoClient *mongo.Client, redisCache *c
 	userRepo := persistence.NewMongoUserTimelineRepository(mongoClient.Database("microblog").Collection("user_timeline"))
 	tweetRepo := persistence.NewMongoTweetRepository(mongoClient.Database("microblog").Collection("tweets"))
 
+	// Services
+	userService := services.NewUserService(userRepo)
+	tweetService := services.NewTweetService(tweetRepo)
+
 	// Port use cases
-	followUserUseCase := &user.FollowUserUseCase{UserRepo: userRepo}
-	getTimelineUseCase := &tweet.GetTimelineUseCase{TweetRepo: tweetRepo, UserRepo: userRepo, Cache: redisCache}
-	publishTweetUseCase := &tweet.PublishTweetUseCase{TweetRepo: tweetRepo}
+	followUserUseCase := &user.FollowUserUseCase{UserRepo: userService}
+	getTimelineUseCase := &tweet.GetTimelineUseCase{TweetService: tweetService, UserServuce: userService, Cache: redisCache}
+	publishTweetUseCase := &tweet.PublishTweetUseCase{TweetService: tweetService}
 
 	// Controllers
 	userController := controllers.UserController{FollowUserUseCase: followUserUseCase}
