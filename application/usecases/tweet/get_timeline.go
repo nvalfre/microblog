@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"errors"
 	"microblog/domain/models"
-	"microblog/domain/repository"
 	"microblog/infrastructure/adapters/interfaces"
+	"microblog/services"
 )
 
 const cacheExpiration = 60
 
 // GetTimelineUseCase handles the logic of get timeline of followed users.
 type GetTimelineUseCase struct {
-	TweetRepo repository.TweetRepository
-	UserRepo  repository.UserRepository
-	Cache     interfaces.Cache
+	TweetService services.TweetService
+	UserServuce  services.UserService
+	Cache        interfaces.Cache
 }
 
 // Execute get timeline to fetch tweets for all followed users.
@@ -29,12 +29,12 @@ func (uc *GetTimelineUseCase) Execute(userID string) ([]models.Tweet, error) {
 		}
 	}
 
-	followers, err := uc.UserRepo.GetFollowers(userID)
+	followers, err := uc.UserServuce.GetFollowers(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	tweets, err := uc.TweetRepo.GetTimeline(followers)
+	tweets, err := uc.TweetService.GetTimeline(followers)
 	if err != nil {
 		return nil, err
 	}
