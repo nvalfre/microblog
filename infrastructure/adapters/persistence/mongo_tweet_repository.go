@@ -6,7 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"microblog/domain/models"
-	"microblog/domain/repository"
 	"microblog/infrastructure/logger"
 )
 
@@ -39,7 +38,7 @@ func (r *MongoTweetRepository) GetTimeline(userIDs []string) ([]models.Tweet, er
 }
 
 // NewMongoTweetRepository creates a new instance of MongoTweetRepository.
-func NewMongoTweetRepository(collection *mongo.Collection) repository.TweetRepository {
+func NewMongoTweetRepository(collection *mongo.Collection) *MongoTweetRepository {
 	return &MongoTweetRepository{
 		Collection: collection,
 	}

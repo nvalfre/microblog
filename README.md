@@ -47,7 +47,7 @@ microblog/
 ├── security/
 │   └── auth/            # Authentication logic
 ├── services/            # Application services for each domain
-├── tests/               # Unit and integration tests
+├── tests/               # integration tests
 ```
 
 ## API Endpoints
@@ -142,11 +142,17 @@ Make sure you have the following installed:
 
 #### With Docker Compose
 
+0.	Run tests:
+```bash
+go test ./integration/...
+```
+
 1.	Clone the repository:
 ```bash
 git clone https://github.com/your-username/microblog.git
 cd microblog
 ```
+
 2.	Build and run the services:
 ```bash
 docker-compose up --build
