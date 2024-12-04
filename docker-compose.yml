@@ -1,4 +1,7 @@
 version: "3.9"
+networks:
+  default:
+    driver: bridge
 
 services:
   mongo:
@@ -9,6 +12,11 @@ services:
     volumes:
       - mongo-data:/data/db
     restart: always
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   redis:
     image: redis:7
@@ -16,6 +24,11 @@ services:
     ports:
       - "6379:6379"
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   app:
     build:
@@ -24,13 +37,18 @@ services:
     container_name: microblog_app
     ports:
       - "8080:8080"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017
-      - REDIS_ADDR=redis:6379
+    restart: always
     depends_on:
       - mongo
       - redis
-    restart: always
+    environment:
+      APP_ENV: ${APP_ENV}
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - ./config/config-${APP_ENV}.yml:/config/config-${APP_ENV}.yml
 
 volumes:
   mongo-data:

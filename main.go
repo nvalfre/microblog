@@ -1,26 +1,23 @@
 package main
 
 import (
-	"log"
+	"github.com/sirupsen/logrus"
 	"microblog/config"
 	"microblog/infrastructure/adapters/cache"
 	"microblog/infrastructure/database"
 	"microblog/infrastructure/logger"
 	"microblog/infrastructure/server"
-	"os"
 )
 
 func main() {
 	logger.InitializeLogger()
 
-	env := os.Getenv("APP_ENV")
-	if env == "" {
-		env = "dev"
-	}
+	appConfig, err := config.LoadConfig("./config")
 
-	appConfig, err := config.LoadConfig("./config", env)
+	logger.Info("Connecting to MongoDB at URI", logrus.Fields{"appConfig": appConfig})
+
 	if err != nil {
-		log.Fatalf("Failed to load configuration: %v", err)
+		logger.Fatal("Failed to load configuration", err)
 	}
 
 	mongoClient := database.NewMongoClient(appConfig.Database.URI)

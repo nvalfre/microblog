@@ -2,7 +2,8 @@ package config
 
 import (
 	"fmt"
-	"log"
+	"microblog/infrastructure/logger"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -37,27 +38,25 @@ type AuthConfig struct {
 }
 
 // LoadConfig reads and load configuration by environment
-func LoadConfig(path string, env string) (*AppConfig, error) {
+func LoadConfig(path string) (*AppConfig, error) {
+	env := os.Getenv("APP_ENV")
 	var config AppConfig
 
-	viper.SetConfigName("config")
+	if env != "" {
+		viper.SetConfigName(fmt.Sprintf("config-%s", env))
+	} else {
+		viper.SetConfigName("config")
+	}
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(path)
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("Error reading default config file: %v", err)
+		logger.Error("Error reading default config file", err)
 		return nil, err
 	}
 
-	if env != "" {
-		viper.SetConfigName(fmt.Sprintf("config.%s", env))
-		if err := viper.MergeInConfig(); err != nil {
-			log.Printf("Error reading %s config file: %v", env, err)
-		}
-	}
-
 	if err := viper.Unmarshal(&config); err != nil {
-		log.Printf("Error unmarshalling config: %v", err)
+		logger.Error("Error unmarshalling config", err)
 		return nil, err
 	}
 

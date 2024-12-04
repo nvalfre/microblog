@@ -1,0 +1,12 @@
+server:
+  port: "8080"
+
+database:
+  uri: "mongodb://mongo:27017"
+  database: "microblog"
+
+redis:
+  address: "redis:6379"
+
+auth:
+  jwt_secret: "your_jwt_secret"

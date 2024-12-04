@@ -143,19 +143,24 @@ Make sure you have the following installed:
 #### With Docker Compose
 
 0.	Run tests:
+1. Units
 ```bash
-go test ./integration/...
+go test ./... -v
+```
+Integration
+```bash
+go test ./test/integration
 ```
 
 1.	Clone the repository:
 ```bash
-git clone https://github.com/your-username/microblog.git
+git clone https://github.com/nvalfre/microblog.git
 cd microblog
 ```
 
-2.	Build and run the services:
+2.	Build and run the services in the desired env (only dev atm):
 ```bash
-docker-compose up --build
+APP_ENV=dev docker-compose up --build 
 ```
 
 #### Without Docker
@@ -164,12 +169,14 @@ docker-compose up --build
 
 2.	Clone the repository:
 ```bash
-export MONGO_URI=mongodb://localhost:27017
-export REDIS_ADDR=localhost:6379
-export JWT_SECRET=your-jwt-secret
+git clone https://github.com/nvalfre/microblog.git
+cd microblog
 ```
-3.	Build and run the services:
+
+3. Setup redis and mongo in localhost and default ports.
+
+4. Build and run the services:
 ```bash
-go run cmd/main.go
+go run main.go
 ```
 
