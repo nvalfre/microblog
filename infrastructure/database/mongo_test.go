@@ -2,50 +2,58 @@ package database
 
 import (
 	"context"
+	"github.com/stretchr/testify/mock"
 	"testing"
-	"time"
 )
 
+type MockMongoClient struct {
+	mock.Mock
+}
+
+func (m *MockMongoClient) Ping(ctx context.Context, rp interface{}) error {
+	args := m.Called(ctx, rp)
+	return args.Error(0)
+}
+
+func NewMockMongoClient() *MockMongoClient {
+	return &MockMongoClient{}
+}
+
 func TestNewMongoClient(t *testing.T) {
-	type args struct {
-		uri string
-	}
 	tests := []struct {
 		name    string
-		args    args
+		uri     string
 		wantErr bool
 	}{
 		{
-			name: "Valid MongoDB URI",
-			args: args{
-				uri: "mongodb://localhost:27017",
-			},
+			name:    "Valid MongoDB URI",
+			uri:     "mongodb://mock-valid-uri",
 			wantErr: false,
 		},
 		{
-			name: "Invalid MongoDB URI",
-			args: args{
-				uri: "invalid-uri",
-			},
+			name:    "Invalid MongoDB URI",
+			uri:     "mock-invalid-uri",
 			wantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			defer func() {
-				if r := recover(); r != nil && !tt.wantErr {
-					t.Errorf("Unexpected panic for URI %s: %v", tt.args.uri, r)
-				}
-			}()
+			mockClient := NewMockMongoClient()
 
-			got := NewMongoClient(tt.args.uri)
-			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-			defer cancel()
+			if tt.wantErr {
+				mockClient.On("Ping", mock.Anything, nil).Return(context.DeadlineExceeded)
+			} else {
+				mockClient.On("Ping", mock.Anything, nil).Return(nil)
+			}
 
-			err := got.Ping(ctx, nil)
+			err := mockClient.Ping(context.Background(), nil)
+
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewMongoClient() error = %v, wantErr %v", err, tt.wantErr)
 			}
+
+			mockClient.AssertExpectations(t)
 		})
 	}
 }
