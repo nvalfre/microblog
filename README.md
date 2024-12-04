@@ -134,9 +134,6 @@ Make sure you have the following installed:
  - Go (v1.20 or later)
  - MongoDB
  - Redis
- - Kubernetes with kubectl
- - AWS CLI for EKS setup
-   Running Locally
 
 ### Running Locally
 
