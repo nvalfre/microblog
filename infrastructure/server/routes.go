@@ -4,15 +4,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"microblog/application/usecases/tweet"
 	"microblog/application/usecases/user"
-	"microblog/infrastructure/adapters/cache"
-	"microblog/infrastructure/adapters/persistence"
+	"microblog/domain/repository"
+	"microblog/infrastructure/adapters/interfaces"
 	"microblog/interface/controllers"
 	"microblog/security/auth"
 	"microblog/services"
 )
 
 // RegisterRoutes sets up the routes for the HTTP server.
-func RegisterRoutes(router *gin.Engine, mongoUserTimelineRepository *persistence.MongoUserTimelineRepository, mongoTweetRepository *persistence.MongoTweetRepository, redisCache *cache.RedisCache) {
+func RegisterRoutes(router *gin.Engine, mongoUserTimelineRepository repository.UserRepository, mongoTweetRepository repository.TweetRepository, redisCache interfaces.Cache) {
 	// Services
 	userService := services.NewUserService(mongoUserTimelineRepository)
 	tweetService := services.NewTweetService(mongoTweetRepository)
